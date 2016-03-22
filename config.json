@@ -1,0 +1,6 @@
+{
+  "cdn": {
+    "bucket": "",
+    "prefix": "<%= appName %>"
+  }
+}
