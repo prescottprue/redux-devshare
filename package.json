@@ -16,7 +16,7 @@
     "build:lib": "babel src --out-dir lib",
     "build": "npm run clean && npm run build:lib",
     "watch:lib": "npm run build:lib -- --stats --progress --colors --watch",
-    "watch": "npm run watch:umd",
+    "watch": "npm run watch:lib",
     "prepublish": "npm run clean && npm run test && npm run build",
     "upload": "node ./bin/upload",
     "docs:clean": "rimraf _book",
@@ -52,7 +52,7 @@
   "dependencies": {
     "devshare": "0.0.2",
     "humps": "1.0.0",
-    "lodash": "4.6.1",
+    "lodash": "^4.6.1",
     "normalizr": "2.0.0"
   },
   "devDependencies": {

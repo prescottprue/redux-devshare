@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 var chai = global.chai = require('chai')
 var expect = global.expect = chai.expect
 var should = global.should = chai.should()

@@ -1,20 +1,35 @@
 import { Schema, arrayOf, normalize } from 'normalizr'
 import { camelizeKeys } from 'humps'
 import Devshare from 'devshare'
+import { isArray } from 'lodash'
+
 // Fetches an API response and normalizes the result JSON according to schema.
 // This makes every API response have the same shape, regardless of how nested it was.
 function callDevshare (callInfoObj) {
-  const { method, methodData, schema } = callInfoObj
-  return Devshare[method](methodData).then(response => {
-    if (schema) {
-      const camelizedJson = camelizeKeys(response)
-      return Object.assign({}, normalize(camelizedJson, schema))
-    }
-    return response
-  }, error => {
-    console.error('Error calling grout', error)
-    return Promise.reject(error)
-  })
+  // console.log('calling devshare:', callInfoObj, Devshare)
+  const { model, method, schema } = callInfoObj
+  let { modelArgs, methodArgs } = callInfoObj
+  // Start call chain
+  let devshareCall = Devshare
+
+  // Wrap args in array if not already
+  if (!isArray(modelArgs)) modelArgs = [modelArgs]
+  if (!isArray(methodArgs)) methodArgs = [methodArgs]
+
+  if (model) {
+    // Handle a model with arguments
+    devshareCall = modelArgs[0]
+      ? devshareCall[model].apply(devshareCall, modelArgs)
+      : devshareCall[model]
+  }
+
+  // Make devshare method call with array of params
+  return devshareCall[method]
+    .apply(devshareCall, methodArgs)
+    .then(response => schema
+      ? Object.assign({}, normalize(camelizeKeys(response), schema))
+      : response
+    )
 }
 
 // We use this Normalizr schemas to transform API responses from a nested form
@@ -56,20 +71,14 @@ export const CALL_DEVSHARE = Symbol('Call Devshare')
 // Performs the call and promises when such actions are dispatched.
 export default store => next => action => {
   const callAPI = action[CALL_DEVSHARE]
-  if (typeof callAPI === 'undefined') {
-    return next(action)
-  }
+  if (typeof callAPI === 'undefined') return next(action)
 
-  let { method, methodData } = callAPI
+  let { method, methodArgs } = callAPI
   const { types } = callAPI
 
-  if (typeof method === 'function') {
-    method = method(store.getState())
-  }
+  if (typeof method === 'function') method = method(store.getState())
 
-  if (typeof method !== 'string') {
-    throw new Error('Specify a method.')
-  }
+  if (typeof method !== 'string') throw new Error('Specify a method.')
 
   if (!Array.isArray(types) || types.length !== 3) {
     throw new Error('Expected an array of three action types.')
@@ -87,7 +96,7 @@ export default store => next => action => {
 
   const [ requestType, successType, failureType ] = types
   next(actionWith({ type: requestType }))
-  const callInfoObj = { method, methodData }
+  const callInfoObj = { method, methodArgs }
   return callDevshare(callInfoObj).then(
     response => next(actionWith({
       response,

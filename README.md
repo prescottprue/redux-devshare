@@ -9,22 +9,102 @@
 [![License][license-image]][license-url]
 [![Code Style][code-style-image]][code-style-url]
 
-## Getting Started
+>redux-devshare is a redux connector for [devshare](https://github.com/KyperTech/devshare).
 
-redux-devshare is universal, so it can be used client-side or server-side.
+## Getting Started
 
 ### Install through NPM
 
 1. Install: `npm install --save redux-devshare`
 
-2. Include and use `redux-devshare`:
+2. Include and use `redux-devshare` when creating redux middleware, when calling an action, or when combining reducers (examples in Documentation section below).
 
-    ```javascript
-  import Reduxdevshare from 'redux-devshare';
-  let redux-devshare = new Reduxdevshare();
-    ```
+## Examples
 
-## [Documentation](https://kypertech.github.com/redux-devshare)
+*Simple example coming soon*
+
+* [devshare-site](https://github.com/KyperTech/devshare-site)
+* [generator-kyper-react](https://github.com/KyperTech/generator-kyper-react) - The output of this generator uses redux-devshare
+
+## Documentation
+
+### Middleware
+
+```javascript
+import { createStore, applyMiddleware, compose } from 'redux'
+import rootReducer from '../reducers' // Combined reducers
+import thunk from 'redux-thunk'
+import { Middleware } from 'redux-devshare'
+
+const createStoreWithMiddleware = compose(
+  // Save for redux middleware
+  applyMiddleware(thunk, Middleware)
+)(createStore)
+```
+
+### Reducers
+
+Add reducers to combineReducers function:
+
+```javascript
+import { combineReducers } from 'redux'
+import { routerStateReducer } from 'redux-router'
+import { Reducers } from 'redux-devshare'
+const { account, projects, entities } = Reducers
+
+let rootReducer = combineReducers({
+  account,
+  projects,
+  entities,
+  router: routerStateReducer
+})
+
+export default rootReducer
+```
+
+### Actions
+
+Example of using Actions from `redux-devshare` in a smart/linked component (also known as a "container"):
+
+```javascript
+import React, { Component, PropTypes } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import { Actions } from 'redux-devshare'
+
+class Main extends Component {
+  constructor (props) {
+    super(props)
+  }
+  onLoginClick = (e) => {
+    e.preventDefault()
+    const testLogin = {username: 'test', password: 'asdfasdf'}
+    this.props.login(testLogin)
+  }
+  render() {
+    return (
+      <div className="App">
+        <button onClick={ this.onLoginClick }>Login</button>
+      </div>
+    )
+  }
+}
+
+// Place state of redux store into props of component
+function mapStateToProps(state) {
+  return {
+    account: state.account
+  }
+}
+
+// Place action methods into props
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(Actions, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main)
+
+```
 
 
 [npm-image]: https://img.shields.io/npm/v/redux-devshare.svg?style=flat-square
