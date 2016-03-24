@@ -1,6 +1,6 @@
 {
   "name": "redux-devshare",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
   "files": [
@@ -41,7 +41,7 @@
   "contributors": [
     {
       "name": "kypertech",
-      "email": ""
+      "email": "kyper.dev@gmail.com"
     }
   ],
   "license": "MIT",
@@ -50,10 +50,10 @@
   },
   "homepage": "https://github.com/kypertech/redux-devshare",
   "dependencies": {
-    "devshare": "0.0.1",
-    "humps": "^1.0.0",
-    "lodash": "^4.6.1",
-    "normalizr": "^2.0.0"
+    "devshare": "0.0.2",
+    "humps": "1.0.0",
+    "lodash": "4.6.1",
+    "normalizr": "2.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.6.5",
