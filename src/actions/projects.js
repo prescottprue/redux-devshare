@@ -11,8 +11,8 @@ export function getProjects (username) {
   return {
     [CALL_DEVSHARE]: {
       types: [ GET_PROJECTS_REQUEST, GET_PROJECTS_SUCCESS, GET_PROJECTS_FAILURE ],
-      model: 'Projects',
-      modelData: username,
+      model: 'projects',
+      modelArgs: username,
       method: 'get',
       schema: Schemas.PROJECT_ARRAY
     }
@@ -31,8 +31,8 @@ export function getProject (username, projectname) {
   return {
     [CALL_DEVSHARE]: {
       types: [ GET_PROJECT_REQUEST, GET_PROJECT_SUCCESS, GET_PROJECT_FAILURE ],
-      model: 'Project',
-      modelData: [ projectname, username ],
+      model: 'project',
+      modelArgs: [ projectname, username ],
       method: 'get',
       schema: Schemas.PROJECT
     }
@@ -50,8 +50,8 @@ export function addProject (name, username) {
   return {
     [CALL_DEVSHARE]: {
       types: [ ADD_PROJECT_REQUEST, ADD_PROJECT_SUCCESS, ADD_PROJECT_FAILURE ],
-      model: 'Projects',
-      modelData: [username],
+      model: 'projects',
+      modelArgs: [ username ],
       method: 'add',
       methodData: [{ name }],
       schema: Schemas.PROJECT
@@ -66,13 +66,13 @@ export const UPDATE_PROJECT_FAILURE = 'UPDATE_PROJECT_FAILURE'
 export function updateProject (project, data) {
   if (!project) {
     console.error({ description: 'Project data is required to update project.' })
-    return {type: UPDATE_PROJECT_FAILURE, payload: {message: 'Project data is required to update project.'}}
+    return { type: UPDATE_PROJECT_FAILURE, payload: { message: 'Project data is required to update project.' } }
   }
   return {
     [CALL_DEVSHARE]: {
       types: [ UPDATE_PROJECT_REQUEST, UPDATE_PROJECT_SUCCESS, UPDATE_PROJECT_FAILURE ],
       model: 'Project',
-      modelData: [project.name, project.owner.username],
+      modelArgs: [ project.name, project.owner.username ],
       method: 'update',
       methodData: data,
       schema: Schemas.PROJECT
@@ -92,8 +92,8 @@ export function deleteProject (project) {
   return {
     [CALL_DEVSHARE]: {
       types: [ DELETE_PROJECT_REQUEST, DELETE_PROJECT_SUCCESS, DELETE_PROJECT_FAILURE ],
-      model: 'Project',
-      modelData: [project.name, project.owner.username],
+      model: 'project',
+      modelArgs: [ project.name, project.owner.username ],
       method: 'remove',
       schema: Schemas.PROJECT
     }
@@ -112,10 +112,10 @@ export function addCollaborator (project, user) {
   return {
     [CALL_DEVSHARE]: {
       types: [ ADD_COLLABORATOR_REQUEST, ADD_COLLABORATOR_SUCCESS, ADD_COLLABORATOR_FAILURE ],
-      model: 'Project',
-      modelData: [project.name, project.owner.username],
+      model: 'project',
+      modelArgs: [ project.name, project.owner.username ],
       method: 'addCollaborator',
-      methodData: [user],
+      methodData: [ user ],
       schema: Schemas.PROJECT
     }
   }
@@ -128,15 +128,15 @@ export const REMOVE_COLLABORATOR_FAILURE = 'REMOVE_COLLABORATOR_FAILURE'
 export function removeCollaborator (project, user) {
   if (!user) {
     console.error({ description: 'Collaborator should have user specified.' })
-    return {type: REMOVE_COLLABORATOR_FAILURE, payload: { message: 'Collaborator should have user specified.' }}
+    return { type: REMOVE_COLLABORATOR_FAILURE, payload: { message: 'Collaborator should have user specified.' } }
   }
   return {
     [CALL_DEVSHARE]: {
       types: [ REMOVE_COLLABORATOR_REQUEST, REMOVE_COLLABORATOR_SUCCESS, REMOVE_COLLABORATOR_FAILURE ],
-      model: 'Project',
-      modelData: [project.name, project.owner.username],
+      model: 'project',
+      modelArgs: [ project.name, project.owner.username ],
       method: 'removeCollaborator',
-      methodData: [user],
+      methodData: [ user ],
       schema: Schemas.PROJECT
     }
   }

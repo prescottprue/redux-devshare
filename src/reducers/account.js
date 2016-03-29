@@ -54,7 +54,8 @@ export function account (state = {
     case LOGOUT_SUCCESS:
       return Object.assign(
         {},
-        {isFetching: false, error: null})
+        { isFetching: false, error: null }
+      )
     case LOGOUT_FAILURE:
       return Object.assign(
         {},

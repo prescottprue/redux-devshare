@@ -20,12 +20,20 @@ function callDevshare (callInfoObj) {
     // Handle a model with arguments
     devshareCall = modelArgs[0]
       ? devshareCall[model].apply(devshareCall, modelArgs)
-      : devshareCall[model]
+      : devshareCall[model]() // Models are all functions
   }
 
+  if (!methodArgs) {
+    // console.debug('no method args:', devshareCall[method])
+    return devshareCall[method]
+      .then(response => schema
+        ? Object.assign({}, normalize(camelizeKeys(response), schema))
+        : response
+      )
+  }
   // Make devshare method call with array of params
   return devshareCall[method]
-    .apply(devshareCall, methodArgs)
+    .apply(this, methodArgs)
     .then(response => schema
       ? Object.assign({}, normalize(camelizeKeys(response), schema))
       : response
@@ -73,7 +81,7 @@ export default store => next => action => {
   const callAPI = action[CALL_DEVSHARE]
   if (typeof callAPI === 'undefined') return next(action)
 
-  let { method, methodArgs } = callAPI
+  let { method, methodArgs, model, modelArgs, subModel, subModelArgs } = callAPI
   const { types } = callAPI
 
   if (typeof method === 'function') method = method(store.getState())
@@ -96,7 +104,7 @@ export default store => next => action => {
 
   const [ requestType, successType, failureType ] = types
   next(actionWith({ type: requestType }))
-  const callInfoObj = { method, methodArgs }
+  const callInfoObj = { method, methodArgs, model, modelArgs, subModel, subModelArgs }
   return callDevshare(callInfoObj).then(
     response => next(actionWith({
       response,
