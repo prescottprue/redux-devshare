@@ -1,6 +1,6 @@
 {
   "cdn": {
-    "bucket": "",
-    "prefix": "<%= appName %>"
+    "bucket": "kyper-cdn",
+    "prefix": "redux-devshare"
   }
 }

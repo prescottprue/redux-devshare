@@ -13,6 +13,20 @@ export function login (username, password) {
   }
 }
 
+export const PROVIDER_REQUEST = 'PROVIDER_REQUEST'
+export const PROVIDER_SUCCESS = 'PROVIDER_SUCCESS'
+export const PROVIDER_FAILURE = 'PROVIDER_FAILURE'
+
+export function authWithProvider (provider) {
+  return {
+    [CALL_DEVSHARE]: {
+      types: [ PROVIDER_REQUEST, PROVIDER_SUCCESS, PROVIDER_FAILURE ],
+      method: 'authWithProvider',
+      methodArgs: provider
+    }
+  }
+}
+
 export const SIGNUP_REQUEST = 'SIGNUP_REQUEST'
 export const SIGNUP_SUCCESS = 'SIGNUP_SUCCESS'
 export const SIGNUP_FAILURE = 'SIGNUP_FAILURE'

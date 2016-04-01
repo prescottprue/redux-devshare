@@ -10,7 +10,7 @@
   })
   function uploadToUrl (url, cb) {
     console.log('Uploading to:', url)
-    exec(`s3-cli --config ~/.s3cfg sync dist s3://${url}`, (error) => {
+    exec(`s3-cli --config ~/.s3cfg sync lib s3://${url}`, (error) => {
       if (error !== null) {
         console.log('error uploading to S3 url: ' + url)
         console.log(error.toString() || error)

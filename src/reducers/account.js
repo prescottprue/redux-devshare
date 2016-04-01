@@ -2,7 +2,8 @@ import {
   LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE,
   SIGNUP_REQUEST, SIGNUP_SUCCESS, SIGNUP_FAILURE,
   LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILURE,
-  RECOVER_REQUEST, RECOVER_SUCCESS, RECOVER_FAILURE
+  RECOVER_REQUEST, RECOVER_SUCCESS, RECOVER_FAILURE,
+  PROVIDER_REQUEST, PROVIDER_SUCCESS, PROVIDER_FAILURE
 } from '../actions/account'
 
 export function account (state = {
@@ -43,7 +44,26 @@ export function account (state = {
       return Object.assign(
         {},
         state,
-        {isFetching: false, error: action.error}
+        { isFetching: false, error: action.error }
+      )
+    case PROVIDER_REQUEST:
+      return Object.assign(
+        {},
+        state,
+        {isFetching: true, error: null}
+      )
+    case PROVIDER_SUCCESS:
+      return Object.assign(
+        {},
+        state,
+        { isFetching: false, error: null },
+        action.response.user
+      )
+    case PROVIDER_FAILURE:
+      return Object.assign(
+        {},
+        state,
+        { isFetching: false, error: action.error }
       )
     case LOGOUT_REQUEST:
       return Object.assign(
