@@ -5,87 +5,101 @@ import {
   DELETE_PROJECT_REQUEST, DELETE_PROJECT_SUCCESS, DELETE_PROJECT_FAILURE,
   UPDATE_PROJECT_REQUEST, UPDATE_PROJECT_SUCCESS, UPDATE_PROJECT_FAILURE
 } from '../actions/account'
-import { clone } from 'lodash'
 
 export function projects (state = {
   isFetching: false,
   error: null
 }, action) {
+  console.log('action received:', action)
   switch (action.type) {
     case GET_PROJECTS_REQUEST:
-      return clone({},
-        state, { isFetching: true, error: null }
+      return Object.assign(
+        {},
+        state,
+        { isFetching: true, error: null }
       )
     case GET_PROJECTS_SUCCESS:
-      return clone({},
+      return Object.assign(
+        {},
         state,
-        action.response,
-        { isFetching: false, error: null }
+        { isFetching: false, error: null },
+        action.response
       )
     case GET_PROJECTS_FAILURE:
-      return clone({},
+      return Object.assign(
+        {},
         state,
         { isFetching: false, error: action.error }
       )
     case GET_PROJECT_REQUEST:
-      return clone({},
+      return Object.assign(
+        {},
         state,
         { isFetching: true, error: null }
       )
     case GET_PROJECT_SUCCESS:
-      return clone({},
+      return Object.assign(
+        {},
         state,
         action.response,
         { isFetching: false, error: null }
       )
     case GET_PROJECT_FAILURE:
-      return clone({},
+      return Object.assign(
+        {},
         state,
         { isFetching: false, error: action.error }
       )
     case ADD_PROJECT_REQUEST:
-      return clone({},
+      return Object.assign(
+        {},
         state,
         { isFetching: true, error: null }
       )
     case ADD_PROJECT_SUCCESS:
-      return clone({},
+      return Object.assign(
+        {},
         state,
         action.response,
         { isFetching: false, error: null }
       )
     case ADD_PROJECT_FAILURE:
-      return clone({},
+      return Object.assign(
+        {},
         state,
         { isFetching: false, error: action.error }
       )
     case DELETE_PROJECT_REQUEST:
-      return clone({},
+      return Object.assign(
+        {},
         state,
         { isFetching: true, error: null }
       )
     case DELETE_PROJECT_SUCCESS:
-      console.log('project delete success')
       return state.filter(project =>
         `${project.owner.username}/${project.name}` !==
-        `${action.modelData[1]}/${action.modelData[0]}`
+        `${action.modelArgs[1]}/${action.modelArgs[0]}`
       )
     case DELETE_PROJECT_FAILURE:
-      return clone({},
+      return Object.assign(
+        {},
         state,
         { isFetching: false, error: action.error }
       )
     case UPDATE_PROJECT_REQUEST:
-      return clone({},
+      return Object.assign(
+        {},
         state,
         { isFetching: true, error: null }
       )
     case UPDATE_PROJECT_SUCCESS:
-      return clone({},
+      return Object.assign(
+        {},
         { isFetching: false, error: null }
       )
     case UPDATE_PROJECT_FAILURE:
-      return clone({},
+      return Object.assign(
+        {},
         state,
         { isFetching: false, error: action.error }
       )

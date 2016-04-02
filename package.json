@@ -48,7 +48,8 @@
     "devshare": "^0.0.5",
     "humps": "1.0.0",
     "lodash": "^4.6.1",
-    "normalizr": "2.0.0"
+    "normalizr": "2.0.0",
+    "updeep": "^0.14.0"
   },
   "devDependencies": {
     "babel-cli": "^6.6.5",

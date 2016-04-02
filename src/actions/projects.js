@@ -42,7 +42,7 @@ export const ADD_PROJECT_REQUEST = 'ADD_PROJECT_REQUEST'
 export const ADD_PROJECT_SUCCESS = 'ADD_PROJECT_SUCCESS'
 export const ADD_PROJECT_FAILURE = 'ADD_PROJECT_FAILURE'
 
-export function addProject (name, username) {
+export function addProject (username, name) {
   if (!username || !name) {
     console.error({ description: 'Project owner and name are required to get project.' })
     return { type: ADD_PROJECT_FAILURE, payload: { message: 'Project owner and name are required to get project.' } }
@@ -53,7 +53,7 @@ export function addProject (name, username) {
       model: 'projects',
       modelArgs: [ username ],
       method: 'add',
-      methodData: [{ name }],
+      methodArgs: [{ name }],
       schema: Schemas.PROJECT
     }
   }
@@ -72,9 +72,9 @@ export function updateProject (project, data) {
     [CALL_DEVSHARE]: {
       types: [ UPDATE_PROJECT_REQUEST, UPDATE_PROJECT_SUCCESS, UPDATE_PROJECT_FAILURE ],
       model: 'Project',
-      modelArgs: [ project.name, project.owner.username ],
+      modelArgs: [ project.owner.username, project.name ],
       method: 'update',
-      methodData: data,
+      methodArgs: data,
       schema: Schemas.PROJECT
     }
   }
@@ -84,8 +84,8 @@ export const DELETE_PROJECT_REQUEST = 'DELETE_PROJECT_REQUEST'
 export const DELETE_PROJECT_SUCCESS = 'DELETE_PROJECT_SUCCESS'
 export const DELETE_PROJECT_FAILURE = 'DELETE_PROJECT_FAILURE'
 
-export function deleteProject (project) {
-  if (!project) {
+export function deleteProject (username, name) {
+  if (!username || !name) {
     console.error({ description: 'Project data is required to delete project.' })
     return {type: DELETE_PROJECT_FAILURE, payload: {message: 'Project data is required to delete project.'}}
   }
@@ -93,9 +93,8 @@ export function deleteProject (project) {
     [CALL_DEVSHARE]: {
       types: [ DELETE_PROJECT_REQUEST, DELETE_PROJECT_SUCCESS, DELETE_PROJECT_FAILURE ],
       model: 'project',
-      modelArgs: [ project.name, project.owner.username ],
-      method: 'remove',
-      schema: Schemas.PROJECT
+      modelArgs: [ username, name ],
+      method: 'remove'
     }
   }
 }
@@ -113,9 +112,9 @@ export function addCollaborator (project, user) {
     [CALL_DEVSHARE]: {
       types: [ ADD_COLLABORATOR_REQUEST, ADD_COLLABORATOR_SUCCESS, ADD_COLLABORATOR_FAILURE ],
       model: 'project',
-      modelArgs: [ project.name, project.owner.username ],
+      modelArgs: [ project.owner.username, project.name ],
       method: 'addCollaborator',
-      methodData: [ user ],
+      methodArgs: [ user ],
       schema: Schemas.PROJECT
     }
   }
@@ -134,9 +133,9 @@ export function removeCollaborator (project, user) {
     [CALL_DEVSHARE]: {
       types: [ REMOVE_COLLABORATOR_REQUEST, REMOVE_COLLABORATOR_SUCCESS, REMOVE_COLLABORATOR_FAILURE ],
       model: 'project',
-      modelArgs: [ project.name, project.owner.username ],
+      modelArgs: [ project.owner.username, project.name ],
       method: 'removeCollaborator',
-      methodData: [ user ],
+      methodArgs: [ user ],
       schema: Schemas.PROJECT
     }
   }

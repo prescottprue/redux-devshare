@@ -24,7 +24,6 @@ function callDevshare (callInfoObj) {
   }
 
   if (!methodArgs) {
-    // console.debug('no method args:', devshareCall[method])
     return devshareCall[method]
       .then(response => schema
         ? Object.assign({}, normalize(camelizeKeys(response), schema))
@@ -81,7 +80,7 @@ export default store => next => action => {
   const callAPI = action[CALL_DEVSHARE]
   if (typeof callAPI === 'undefined') return next(action)
 
-  let { method, methodArgs, model, modelArgs, subModel, subModelArgs } = callAPI
+  let { method, methodArgs, model, modelArgs, subModel, subModelArgs, schema } = callAPI
   const { types } = callAPI
 
   if (typeof method === 'function') method = method(store.getState())
@@ -104,10 +103,13 @@ export default store => next => action => {
 
   const [ requestType, successType, failureType ] = types
   next(actionWith({ type: requestType }))
-  const callInfoObj = { method, methodArgs, model, modelArgs, subModel, subModelArgs }
+  const callInfoObj = { method, methodArgs, model, modelArgs, subModel, subModelArgs, schema }
   return callDevshare(callInfoObj).then(
     response => next(actionWith({
       response,
+      method,
+      modelArgs,
+      model,
       type: successType
     })), error => next(actionWith({
       type: failureType,
