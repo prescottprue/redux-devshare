@@ -5,7 +5,6 @@
 [![Build Status][travis-image]][travis-url]
 [![Dependency Status][daviddm-image]][daviddm-url]
 [![Code Climate][climate-image]][climate-url]
-[![Code Coverage][coverage-image]][coverage-url]
 [![License][license-image]][license-url]
 [![Code Style][code-style-image]][code-style-url]
 
@@ -76,15 +75,17 @@ class Main extends Component {
   constructor (props) {
     super(props)
   }
-  onLoginClick = (e) => {
+  onLoginClick = e => {
     e.preventDefault()
-    const testLogin = {username: 'test', password: 'asdfasdf'}
+    const testLogin = { username: 'test', password: 'asdfasdf' }
     this.props.login(testLogin)
   }
-  render() {
+  render () {
     return (
       <div className="App">
-        <button onClick={ this.onLoginClick }>Login</button>
+        <button onClick={ this.onLoginClick }>
+          Login
+        </button>
       </div>
     )
   }

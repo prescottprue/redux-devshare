@@ -1,6 +1,6 @@
 {
   "name": "redux-devshare",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
   "files": [
@@ -45,7 +45,7 @@
   },
   "homepage": "https://github.com/kypertech/redux-devshare",
   "dependencies": {
-    "devshare": "0.0.4",
+    "devshare": "^0.0.5",
     "humps": "1.0.0",
     "lodash": "^4.6.1",
     "normalizr": "2.0.0"

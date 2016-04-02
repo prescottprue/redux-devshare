@@ -21,7 +21,8 @@ export function account (state = {
       return Object.assign(
         {},
         state,
-        {isFetching: false, error: null}, action.response.user
+        {isFetching: false, error: null},
+        action.response.user
       )
     case LOGIN_FAILURE:
       return Object.assign(
@@ -38,7 +39,8 @@ export function account (state = {
       return Object.assign(
         {},
         state,
-        {isFetching: false, error: null}, action.response.user
+        {isFetching: false, error: null},
+        action.response.user
       )
     case SIGNUP_FAILURE:
       return Object.assign(
