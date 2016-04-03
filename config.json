@@ -1,6 +1,6 @@
 {
   "cdn": {
     "bucket": "kyper-cdn",
-    "prefix": "redux-devshare"
+    "prefix": "js/redux-devshare"
   }
 }
