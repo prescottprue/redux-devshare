@@ -104,9 +104,13 @@ export const ADD_COLLABORATOR_SUCCESS = 'ADD_COLLABORATOR_SUCCESS'
 export const ADD_COLLABORATOR_FAILURE = 'ADD_COLLABORATOR_FAILURE'
 
 export function addCollaborator (project, user) {
+  if (!project || !project.owner || !project.name) {
+    console.error({ description: 'Project required to add collaborator.' })
+    return {type: ADD_COLLABORATOR_FAILURE, payload: {message: 'Project required to add collaborator.'}}
+  }
   if (!user) {
     console.error({ description: 'Collaborator should have user specified.' })
-    return {type: ADD_COLLABORATOR_FAILURE, payload: {message: 'Collaborator should have user specified.'}}
+    return {type: ADD_COLLABORATOR_FAILURE, payload: {message: 'Username required to add collaborator.'}}
   }
   return {
     [CALL_DEVSHARE]: {
@@ -125,6 +129,10 @@ export const REMOVE_COLLABORATOR_SUCCESS = 'REMOVE_COLLABORATOR_SUCCESS'
 export const REMOVE_COLLABORATOR_FAILURE = 'REMOVE_COLLABORATOR_FAILURE'
 
 export function removeCollaborator (project, user) {
+  if (!project || !project.owner || !project.name) {
+    console.error({ description: 'Project required to remove collaborator.' })
+    return {type: ADD_COLLABORATOR_FAILURE, payload: {message: 'Project required to remove collaborator.'}}
+  }
   if (!user) {
     console.error({ description: 'Collaborator should have user specified.' })
     return { type: REMOVE_COLLABORATOR_FAILURE, payload: { message: 'Collaborator should have user specified.' } }

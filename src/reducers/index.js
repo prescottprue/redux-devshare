@@ -1,4 +1,5 @@
 export { account } from './account'
+export { projects } from './projects'
 import u from 'updeep'
 import { merge } from 'lodash'
 // Updates an entity cache in response to any action with response.entities.
