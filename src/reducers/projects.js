@@ -13,7 +13,7 @@ export function projects (state = {
   isFetching: false,
   error: null
 }, action) {
-  console.debug('action received:', action, action.error)
+  // console.debug('action received:', action, action.error)
   switch (action.type) {
     case GET_PROJECTS_REQUEST:
       return merge(
@@ -26,7 +26,7 @@ export function projects (state = {
         {},
         state,
         { isFetching: false, error: null },
-        action.response.result
+        action.response.entities.projects || action.response
       )
     case GET_PROJECTS_FAILURE:
       return merge(
@@ -44,7 +44,7 @@ export function projects (state = {
       return merge(
         {},
         state,
-        action.response.result,
+        action.response.entities.projects || action.response,
         { isFetching: false, error: null }
       )
     case GET_PROJECT_FAILURE:
@@ -130,16 +130,18 @@ export function projects (state = {
         { isFetching: true, error: null }
       )
     case REMOVE_COLLABORATOR_SUCCESS:
+      console.debug('Remove collaborator success:', action)
       const { entities, result } = action.response
-      const newState = state.map(project =>
+      const newState = state.filter(project =>
         `${project.owner.username}/${project.name}` ===
-        `${action.modelArgs[0]}/${action.modelArgs[1]}` ? entities.projects[result] : project
+        `${action.modelArgs[0]}/${action.modelArgs[1]}`
       )
       console.debug('newState:', newState)
       return merge(
         {},
         { isFetching: false, error: null },
-        newState
+        newState,
+        entities.projects
       )
     case REMOVE_COLLABORATOR_FAILURE:
       return merge(

@@ -99,6 +99,29 @@ export function deleteProject (username, name) {
   }
 }
 
+export const CLONE_PROJECT_REQUEST = 'CLONE_PROJECT_REQUEST'
+export const CLONE_PROJECT_SUCCESS = 'CLONE_PROJECT_SUCCESS'
+export const CLONE_PROJECT_FAILURE = 'CLONE_PROJECT_FAILURE'
+
+export function cloneProject (username, name, newUsername, newName) {
+  if (!username || !name || !newUsername) {
+    console.error({ description: 'Project data is required to clone project.' })
+    return {
+      type: CLONE_PROJECT_FAILURE,
+      payload: { message: 'Project data is required to clone project.' }
+    }
+  }
+  return {
+    [CALL_DEVSHARE]: {
+      types: [ CLONE_PROJECT_REQUEST, CLONE_PROJECT_SUCCESS, CLONE_PROJECT_FAILURE ],
+      model: 'project',
+      modelArgs: [ username, name ],
+      method: 'clone',
+      methodArgs: [ newUsername, newName ]
+    }
+  }
+}
+
 export const ADD_COLLABORATOR_REQUEST = 'ADD_COLLABORATOR_REQUEST'
 export const ADD_COLLABORATOR_SUCCESS = 'ADD_COLLABORATOR_SUCCESS'
 export const ADD_COLLABORATOR_FAILURE = 'ADD_COLLABORATOR_FAILURE'

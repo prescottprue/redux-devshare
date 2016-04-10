@@ -6,97 +6,100 @@ import {
   PROVIDER_REQUEST, PROVIDER_SUCCESS, PROVIDER_FAILURE
 } from '../actions/account'
 
+import { merge } from 'lodash'
+
 export function account (state = {
   isFetching: false,
   error: null
 }, action) {
+  // console.log('account reducer:', action)
   switch (action.type) {
     case LOGIN_REQUEST:
-      return Object.assign(
+      return merge(
         {},
         state,
         {isFetching: true, error: null}
       )
     case LOGIN_SUCCESS:
-      return Object.assign(
+      return merge(
         {},
         state,
         {isFetching: false, error: null},
         action.response.user
       )
     case LOGIN_FAILURE:
-      return Object.assign(
+      return merge(
         {},
         state, {isFetching: false, error: action.error}
       )
     case SIGNUP_REQUEST:
-      return Object.assign(
+      return merge(
         {},
         state,
         {isFetching: true, error: null}
       )
     case SIGNUP_SUCCESS:
-      return Object.assign(
+      return merge(
         {},
         state,
         {isFetching: false, error: null},
         action.response.user
       )
     case SIGNUP_FAILURE:
-      return Object.assign(
+      return merge(
         {},
         state,
         { isFetching: false, error: action.error }
       )
     case PROVIDER_REQUEST:
-      return Object.assign(
+      return merge(
         {},
         state,
         {isFetching: true, error: null}
       )
     case PROVIDER_SUCCESS:
-      return Object.assign(
+      return merge(
         {},
         state,
         { isFetching: false, error: null },
         action.response.user
       )
     case PROVIDER_FAILURE:
-      return Object.assign(
+      return merge(
         {},
         state,
-        { isFetching: false, error: action.error }
+        { isFetching: false, error: action.error || action.response.message || action.response }
       )
     case LOGOUT_REQUEST:
-      return Object.assign(
+      return merge(
         {},
         state,
         {isFetching: true, error: null}
       )
     case LOGOUT_SUCCESS:
-      return Object.assign(
+      return merge(
         {},
         { isFetching: false, error: null }
       )
     case LOGOUT_FAILURE:
-      return Object.assign(
+      return merge(
         {},
         state,
         {isFetching: false, error: action.error}
       )
     case RECOVER_REQUEST:
-      return Object.assign(
+      return merge(
         {},
         state,
         {isFetching: true, error: null}
       )
     case RECOVER_SUCCESS:
-      return Object.assign(
+      return merge(
         {},
         {isFetching: false, error: null}
       )
     case RECOVER_FAILURE:
-      return Object.assign(
+      return merge(
         {},
         state,
         {isFetching: false, error: action.error}
