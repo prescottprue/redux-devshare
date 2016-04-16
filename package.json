@@ -1,6 +1,6 @@
 {
   "name": "redux-devshare",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
   "files": [
@@ -26,7 +26,8 @@
   },
   "keywords": [
     "kyper",
-    "matter",
+    "devshare",
+    "redux",
     "tessellate",
     "authentication",
     "user",
@@ -45,7 +46,7 @@
   },
   "homepage": "https://github.com/kypertech/redux-devshare",
   "dependencies": {
-    "devshare": "^0.0.9",
+    "devshare": "^0.1.0",
     "humps": "1.0.0",
     "lodash": "^4.9.0",
     "normalizr": "2.0.1",
