@@ -32,7 +32,7 @@ export function getProject (username, projectname) {
     [CALL_DEVSHARE]: {
       types: [ GET_PROJECT_REQUEST, GET_PROJECT_SUCCESS, GET_PROJECT_FAILURE ],
       model: 'project',
-      modelArgs: [ projectname, username ],
+      modelArgs: [ username, projectname ],
       method: 'get',
       schema: Schemas.PROJECT
     }
