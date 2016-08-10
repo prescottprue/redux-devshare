@@ -3,12 +3,15 @@ export const LOGIN_REQUEST = 'LOGIN_REQUEST'
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
 export const LOGIN_FAILURE = 'LOGIN_FAILURE'
 
-export function login (username, password) {
+export function login (username, password, project) {
+  console.log('login called', { username, password, project })
+  const methodArgs = project ? [ username, password, project ] : [ username, password ]
+  console.log('method Args', methodArgs);
   return {
     [CALL_DEVSHARE]: {
       types: [ LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE ],
       method: 'login',
-      methodArgs: [ username, password ]
+      methodArgs
     }
   }
 }
@@ -31,12 +34,13 @@ export const SIGNUP_REQUEST = 'SIGNUP_REQUEST'
 export const SIGNUP_SUCCESS = 'SIGNUP_SUCCESS'
 export const SIGNUP_FAILURE = 'SIGNUP_FAILURE'
 
-export function signup (signupData) {
+export function signup (signupData, project) {
+  const methodArgs = project ? [signupData, project] : signupData
   return {
     [CALL_DEVSHARE]: {
       types: [ SIGNUP_REQUEST, SIGNUP_SUCCESS, SIGNUP_FAILURE ],
       method: 'signup',
-      methodArgs: signupData
+      methodArgs
     }
   }
 }
