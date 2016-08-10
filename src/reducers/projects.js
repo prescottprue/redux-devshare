@@ -131,7 +131,7 @@ export function projects (state = {
       )
     case REMOVE_COLLABORATOR_SUCCESS:
       console.debug('Remove collaborator success:', action)
-      const { entities, result } = action.response
+      const { entities } = action.response
       const newState = state.filter(project =>
         `${project.owner.username}/${project.name}` ===
         `${action.modelArgs[0]}/${action.modelArgs[1]}`
