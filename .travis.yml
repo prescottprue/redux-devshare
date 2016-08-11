@@ -1,7 +1,6 @@
 language: node_js
 
 node_js:
-  - "5"
   - "6"
 
 branches:
@@ -10,11 +9,27 @@ branches:
 
 sudo: false
 
-script: "npm run lint:fix && npm run test:cov"
+script:
+  - npm run lint:fix
+  - npm run test:cov
 
 cache:
   directories:
     - node_modules
+
+
+deploy:
+  provider: s3
+  skip_cleanup: true
+  access_key_id: $AWS_KEY
+  secret_access_key: $AWS_SECRET
+  bucket: $AWS_BUCKET
+  acl: public_read
+  local_dir: lib
+  upload-dir: js/redux-devshare/latest
+  on:
+    branch: master
+    condition: $AWS_KEY
 
 addons:
   code_climate:
