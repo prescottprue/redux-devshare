@@ -8,7 +8,7 @@ export const login = (username, password, project) => (
     [CALL_DEVSHARE]: {
       types: [ LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE ],
       method: 'login',
-      methodArgs: Array.prototype.slice.call(arguments)
+      methodArgs: project ? [username, password] : [username, password, project]
     }
   }
 )
@@ -31,12 +31,12 @@ export const SIGNUP_REQUEST = 'SIGNUP_REQUEST'
 export const SIGNUP_SUCCESS = 'SIGNUP_SUCCESS'
 export const SIGNUP_FAILURE = 'SIGNUP_FAILURE'
 
-export const signup = (signupData, project) => (
+export const signup = ({username, password}, project) => (
   {
     [CALL_DEVSHARE]: {
       types: [ SIGNUP_REQUEST, SIGNUP_SUCCESS, SIGNUP_FAILURE ],
       method: 'signup',
-      methodArgs: Array.prototype.slice.call(arguments)
+      methodArgs: project ? [username, password] : [username, password, project]
     }
   }
 )
