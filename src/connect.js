@@ -61,8 +61,8 @@ export default (dataOrFn = []) => WrappedComponent => {
 
     constructor (props, context) {
       super(props, context)
-      this._firebaseEvents = []
-      this.firebase = null
+      this._devshareEvents = []
+      this.devshare = null
     }
 
     static contextTypes = {
@@ -70,21 +70,21 @@ export default (dataOrFn = []) => WrappedComponent => {
     };
 
     componentWillMount () {
-      const { firebase, dispatch } = this.context.store
+      const { devshare, dispatch } = this.context.store
 
       const linkFn = ensureCallable(dataOrFn)
-      const data = linkFn(this.props, firebase)
+      const data = linkFn(this.props, devshare)
 
-      const { ref, helpers, storage, database, auth } = firebase
-      this.firebase = { ref, storage, database, auth, ...helpers }
+      const { ref, helpers, storage, database, auth } = devshare
+      this.devshare = { ref, storage, database, auth, ...helpers }
 
-      this._firebaseEvents = getEventsFromDefinition(data)
-      watchEvents(firebase, dispatch, this._firebaseEvents)
+      this._devshareEvents = getEventsFromDefinition(data)
+      watchEvents(devshare, dispatch, this._devshareEvents)
     }
 
     componentWillUnmount () {
-      const {firebase} = this.context.store
-      unWatchEvents(firebase, this._firebaseEvents)
+      const {devshare} = this.context.store
+      unWatchEvents(devshare, this._devshareEvents)
     }
 
     render () {
@@ -92,7 +92,7 @@ export default (dataOrFn = []) => WrappedComponent => {
         <WrappedComponent
           {...this.props}
           {...this.state}
-          firebase={this.firebase}
+          devshare={this.devshare}
         />
       )
     }
