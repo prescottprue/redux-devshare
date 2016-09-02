@@ -28,16 +28,16 @@ const getWatchPath = (event, path) => event + ':' + ((path.substring(0, 1) === '
  * @param {String} path - Path to watch with watcher
  * @param {String} queryId - Id of query
  */
-const setWatcher = (firebase, event, path, queryId = undefined) => {
+const setWatcher = (devshare, event, path, queryId = undefined) => {
   const id = (queryId) ? event + ':/' + queryId : getWatchPath(event, path)
 
-  if (firebase._.watchers[id]) {
-    firebase._.watchers[id]++
+  if (devshare._.watchers[id]) {
+    devshare._.watchers[id]++
   } else {
-    firebase._.watchers[id] = 1
+    devshare._.watchers[id] = 1
   }
 
-  return firebase._.watchers[id]
+  return devshare._.watchers[id]
 }
 
 /**
@@ -47,9 +47,9 @@ const setWatcher = (firebase, event, path, queryId = undefined) => {
  * @param {String} path - Path to watch with watcher
  * @param {String} queryId - Id of query
  */
-const getWatcherCount = (firebase, event, path, queryId = undefined) => {
+const getWatcherCount = (devshare, event, path, queryId = undefined) => {
   const id = (queryId) ? event + ':/' + queryId : getWatchPath(event, path)
-  return firebase._.watchers[id]
+  return devshare._.watchers[id]
 }
 
 /**
@@ -82,7 +82,7 @@ const getQueryIdFromPath = (path) => {
  * @param {String} path - Path to watch with watcher
  * @param {String} queryId - Id of query
  */
-const unsetWatcher = (firebase, event, path, queryId = undefined) => {
+const unsetWatcher = (devshare, event, path, queryId = undefined) => {
   let id = queryId || getQueryIdFromPath(path)
   path = path.split('#')[0]
 
@@ -90,13 +90,13 @@ const unsetWatcher = (firebase, event, path, queryId = undefined) => {
     id = getWatchPath(event, path)
   }
 
-  if (firebase._.watchers[id] <= 1) {
-    delete firebase._.watchers[id]
+  if (devshare._.watchers[id] <= 1) {
+    delete devshare._.watchers[id]
     if (event !== 'first_child') {
-      firebase.database().ref().child(path).off(event)
+      devshare.firebase.database().ref().child(path).off(event)
     }
-  } else if (firebase._.watchers[id]) {
-    firebase._.watchers[id]--
+  } else if (devshare._.watchers[id]) {
+    devshare._.watchers[id]--
   }
 }
 
@@ -109,7 +109,7 @@ const unsetWatcher = (firebase, event, path, queryId = undefined) => {
  * @param {String} dest
  * @param {Boolean} onlyLastEvent - Whether or not to listen to only the last event
  */
-export const watchEvent = (firebase, dispatch, event, path, dest, onlyLastEvent = false) => {
+export const watchEvent = (devshare, dispatch, event, path, dest, onlyLastEvent = false) => {
   let isQuery = false
   let queryParams = []
   let queryId = getQueryIdFromPath(path)
@@ -122,24 +122,24 @@ export const watchEvent = (firebase, dispatch, event, path, dest, onlyLastEvent 
   }
 
   const watchPath = (!dest) ? path : path + '@' + dest
-  const counter = getWatcherCount(firebase, event, watchPath, queryId)
+  const counter = getWatcherCount(devshare, event, watchPath, queryId)
 
   if (counter > 0) {
     if (onlyLastEvent) {
       // listen only to last query on same path
       if (queryId) {
-        unsetWatcher(firebase, event, path, queryId)
+        unsetWatcher(devshare, event, path, queryId)
       } else {
         return
       }
     }
   }
 
-  setWatcher(firebase, event, watchPath, queryId)
+  setWatcher(devshare, event, watchPath, queryId)
 
   if (event === 'first_child') {
     // return
-    return firebase.database()
+    return devshare.firebase.database()
       .ref()
       .child(path)
       .orderByKey()
@@ -154,7 +154,7 @@ export const watchEvent = (firebase, dispatch, event, path, dest, onlyLastEvent 
       })
   }
 
-  let query = firebase.database().ref().child(path)
+  let query = devshare.firebase.database().ref().child(path)
 
   if (isQuery) {
     let doNotParse = false
@@ -237,8 +237,8 @@ export const watchEvent = (firebase, dispatch, event, path, dest, onlyLastEvent 
  * @param {String} event - Event for which to remove the watcher
  * @param {String} path - Path of watcher to remove
  */
-export const unWatchEvent = (firebase, event, path, queryId = undefined) =>
-    unsetWatcher(firebase, event, path, queryId)
+export const unWatchEvent = (devshare, event, path, queryId = undefined) =>
+    unsetWatcher(devshare, event, path, queryId)
 
 /**
  * @description Add watchers to a list of events
@@ -246,16 +246,16 @@ export const unWatchEvent = (firebase, event, path, queryId = undefined) =>
  * @param {Function} dispatch - Action dispatch function
  * @param {Array} events - List of events for which to add watchers
  */
-export const watchEvents = (firebase, dispatch, events) =>
-    events.forEach(event => watchEvent(firebase, dispatch, event.name, event.path))
+export const watchEvents = (devshare, dispatch, events) =>
+    events.forEach(event => watchEvent(devshare, dispatch, event.name, event.path))
 
 /**
  * @description Remove watchers from a list of events
  * @param {Object} firebase - Internal firebase object
  * @param {Array} events - List of events for which to remove watchers
  */
-export const unWatchEvents = (firebase, events) =>
-    events.forEach(event => unWatchEvent(firebase, event.name, event.path))
+export const unWatchEvents = (devshare, events) =>
+    events.forEach(event => unWatchEvent(devshare, event.name, event.path))
 
 /**
  * @description Dispatch login error action
@@ -294,12 +294,12 @@ const dispatchLogin = (dispatch, auth) =>
  * @description Remove listener from user profile
  * @param {Object} firebase - Internal firebase object
  */
-const unWatchUserProfile = (firebase) => {
-  const authUid = firebase._.authUid
-  const userProfile = firebase._.config.userProfile
-  if (firebase._.profileWatch) {
-    firebase.database().ref().child(`${userProfile}/${authUid}`).off('value', firebase._.profileWatch)
-    firebase._.profileWatch = null
+const unWatchUserProfile = (devshare) => {
+  const authUid = devshare._.authUid
+  const userProfile = devshare._.config.userProfile
+  if (devshare._.profileWatch) {
+    devshare.firebase.database().ref().child(`${userProfile}/${authUid}`).off('value', devshare._.profileWatch)
+    devshare._.profileWatch = null
   }
 }
 
@@ -308,12 +308,12 @@ const unWatchUserProfile = (firebase) => {
  * @param {Function} dispatch - Action dispatch function
  * @param {Object} firebase - Internal firebase object
  */
-const watchUserProfile = (dispatch, firebase) => {
-  const authUid = firebase._.authUid
-  const userProfile = firebase._.config.userProfile
-  unWatchUserProfile(firebase)
-  if (firebase._.config.userProfile) {
-    firebase._.profileWatch = firebase.database()
+const watchUserProfile = (dispatch, devshare) => {
+  const authUid = devshare._.authUid
+  const userProfile = devshare._.config.userProfile
+  unWatchUserProfile(devshare)
+  if (devshare._.config.userProfile) {
+    devshare._.profileWatch = devshare.firebase.database()
       .ref()
       .child(`${userProfile}/${authUid}`)
       .on('value', snap => {
@@ -334,7 +334,7 @@ const watchUserProfile = (dispatch, firebase) => {
  * @param {String} credentials.type - Popup or redirect (only needed for 3rd party provider login)
  * @param {String} credentials.token - Custom or provider token
  */
-const getLoginMethodAndParams = ({email, password, provider, type, token}, firebase) => {
+const getLoginMethodAndParams = ({email, password, provider, type, token}, devshare) => {
   if (provider) {
     if (token) {
       return {
@@ -342,7 +342,7 @@ const getLoginMethodAndParams = ({email, password, provider, type, token}, fireb
         params: [ provider, token ]
       }
     }
-    const authProvider = new firebase.auth[`${capitalize(provider)}AuthProvider`]
+    const authProvider = new devshare.firebase.auth[`${capitalize(provider)}AuthProvider`]
     authProvider.addScope('email')
     if (type === 'popup') {
       return {
@@ -372,32 +372,32 @@ const getLoginMethodAndParams = ({email, password, provider, type, token}, fireb
  * watches user profile and dispatches login action
  * @param {Function} dispatch - Action dispatch function
  */
-export const init = (dispatch, firebase) => {
+export const init = (dispatch, devshare) => {
   dispatch({ type: AUTHENTICATION_INIT_STARTED })
 
-  firebase.auth().onAuthStateChanged(authData => {
+  devshare.firebase.auth().onAuthStateChanged(authData => {
     if (!authData) {
       return dispatch({ type: LOGOUT })
     }
 
-    firebase._.authUid = authData.uid
-    watchUserProfile(dispatch, firebase)
+    devshare._.authUid = authData.uid
+    watchUserProfile(dispatch, devshare)
 
     dispatchLogin(dispatch, authData)
   })
   dispatch({ type: AUTHENTICATION_INIT_FINISHED })
 
-  firebase.auth().currentUser
+  devshare.firebase.auth().currentUser
 }
 
-export const createUserProfile = (dispatch, firebase, userData, profile) => {
+export const createUserProfile = (dispatch, devshare, userData, profile) => {
   // Check for user's profile at userProfile path if provided
-  if (!firebase._.config.userProfile) {
+  if (!devshare._.config.userProfile) {
     return Promise.resolve(userData)
   }
-  return firebase.database()
+  return devshare.firebase.database()
     .ref()
-    .child(`${firebase._.config.userProfile}/${userData.uid}`)
+    .child(`${devshare._.config.userProfile}/${userData.uid}`)
     .once('value')
     .then(profileSnap => {
       // Return Profile if it exists
@@ -432,13 +432,13 @@ export const createUserProfile = (dispatch, firebase, userData, profile) => {
  * @param {Object} credentials.type - Popup or redirect (only needed for 3rd party provider login)
  * @param {Object} credentials.token - Custom or provider token
  */
-export const login = (dispatch, firebase, credentials) => {
+export const login = (dispatch, devshare, credentials) => {
   dispatchLoginError(dispatch, null)
-  const { method, params } = getLoginMethodAndParams(credentials, firebase)
+  const { method, params } = getLoginMethodAndParams(credentials, devshare)
   if (method === 'signInWithEmailAndPassword' && !credentials.email) {
-    firebase.database().ref().child(firebase._.config.usernames)
+    devshare.firebase.database().ref().child(devshare._.config.usernames)
   }
-  return firebase.auth()[method](...params)
+  return devshare.firebase.auth()[method](...params)
     .then((userData) => {
       // For email auth return uid (createUser is used for creating a profile)
       if (userData.email) return userData.uid
@@ -446,7 +446,7 @@ export const login = (dispatch, firebase, credentials) => {
       const { user } = userData
       return createUserProfile(
         dispatch,
-        firebase,
+        devshare,
         user,
         Object.assign(
           {},
@@ -468,11 +468,14 @@ export const login = (dispatch, firebase, credentials) => {
  * @param {Function} dispatch - Action dispatch function
  * @param {Object} firebase - Internal firebase object
  */
-export const logout = (dispatch, firebase) => {
-  firebase.auth().signOut()
-  dispatch({ type: LOGOUT })
-  firebase._.authUid = null
-  unWatchUserProfile(firebase)
+export const logout = (dispatch, devshare) => {
+  return new Promise((resolve) => {
+    devshare.firebase.auth().signOut()
+    dispatch({ type: LOGOUT })
+    devshare._.authUid = null
+    unWatchUserProfile(devshare)
+    resolve()
+  })
 }
 
 /**
@@ -482,7 +485,7 @@ export const logout = (dispatch, firebase) => {
  * @param {Object} credentials - Login credentials
  * @return {Promise}
  */
-export const createUser = (dispatch, firebase, { email, password }, profile) => {
+export const createUser = (dispatch, devshare, { email, password }, profile) => {
   dispatchLoginError(dispatch, null)
 
   if (!email || !password) {
@@ -490,12 +493,12 @@ export const createUser = (dispatch, firebase, { email, password }, profile) => 
     return Promise.reject('Email and Password are Required')
   }
 
-  return firebase.auth()
+  return devshare.firebase.auth()
     .createUserWithEmailAndPassword(email, password)
     .then((userData) => {
       // Login to newly created account
-      login(dispatch, firebase, { email, password })
-        .then(() => createUserProfile(dispatch, firebase, userData, profile))
+      login(dispatch, devshare, { email, password })
+        .then(() => createUserProfile(dispatch, devshare, userData, profile))
         .catch(err => {
           if (err) {
             switch (err.code) {
@@ -522,9 +525,9 @@ export const createUser = (dispatch, firebase, { email, password }, profile) => 
  * @param {String} email - Email to send recovery email to
  * @return {Promise}
  */
-export const resetPassword = (dispatch, firebase, email) => {
+export const resetPassword = (dispatch, devshare, email) => {
   dispatchLoginError(dispatch, null)
-  return firebase.auth()
+  return devshare.firebase.auth()
     .sendPasswordResetEmail(email)
     .catch((err) => {
       if (err) {

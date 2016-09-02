@@ -1,4 +1,5 @@
-import Firebase from 'firebase'
+// import Firebase from 'firebase'
+import Devshare, { init } from 'devshare'
 import * as Actions from './actions'
 import { firebase as fbConfig } from './config'
 
@@ -11,17 +12,15 @@ export default (config) => next => (reducer, initialState) => {
   const store = next(reducer, initialState)
   const { dispatch } = store
 
-  // Initialize Firebase
-  try {
-    Firebase.initializeApp(fbConfig)
-  } catch (err) {}
+  // Initialize devshare
+  init()
 
-  const ref = Firebase.database().ref()
+  const ref = Devshare.firebase.database().ref()
 
   // Combine all configs
   const configs = Object.assign({}, defaultConfig, fbConfig, config)
 
-  const devshare = Object.defineProperty(Firebase, '_', {
+  const devshare = Object.defineProperty(Devshare, '_', {
     value: {
       watchers: {},
       config: configs,
