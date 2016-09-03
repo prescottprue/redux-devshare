@@ -2,22 +2,19 @@
 // export * as projects from './projects'
 // export * as files from './files'
 
-
 import {
     SET,
     SET_PROFILE,
     LOGIN,
     LOGOUT,
     LOGIN_ERROR,
-    UNAUTHORIZED_ERROR,
+    // UNAUTHORIZED_ERROR,
     NO_VALUE,
     AUTHENTICATION_INIT_STARTED,
     AUTHENTICATION_INIT_FINISHED
 } from '../constants'
 
 import { Promise } from 'es6-promise'
-
-import { capitalize } from 'lodash'
 
 const getWatchPath = (event, path) => event + ':' + ((path.substring(0, 1) === '/') ? '' : '/') + path
 
@@ -273,22 +270,23 @@ const dispatchLoginError = (dispatch, authError) =>
  * @param {Function} dispatch - Action dispatch function
  * @param {Object} authError - Error object
  */
-const dispatchUnauthorizedError = (dispatch, authError) =>
-    dispatch({
-      type: UNAUTHORIZED_ERROR,
-      authError
-    })
+// const dispatchUnauthorizedError = (dispatch, authError) =>
+//     dispatch({
+//       type: UNAUTHORIZED_ERROR,
+//       authError
+//     })
+
 /**
  * @description Dispatch login action
  * @param {Function} dispatch - Action dispatch function
  * @param {Object} auth - Auth data object
  */
 const dispatchLogin = (dispatch, auth) =>
-    dispatch({
-      type: LOGIN,
-      auth,
-      authError: null
-    })
+  dispatch({
+    type: LOGIN,
+    auth,
+    authError: null
+  })
 
 /**
  * @description Remove listener from user profile
@@ -326,48 +324,6 @@ const watchUserProfile = (dispatch, devshare) => {
 }
 
 /**
- * @description Get correct login method and params order based on provided credentials
- * @param {Object} credentials - Login credentials
- * @param {String} credentials.email - Email to login with (only needed for email login)
- * @param {String} credentials.password - Password to login with (only needed for email login)
- * @param {String} credentials.provider - Provider name such as google, twitter (only needed for 3rd party provider login)
- * @param {String} credentials.type - Popup or redirect (only needed for 3rd party provider login)
- * @param {String} credentials.token - Custom or provider token
- */
-const getLoginMethodAndParams = ({email, password, provider, type, token}, devshare) => {
-  if (provider) {
-    if (token) {
-      return {
-        method: 'signInWithCredential',
-        params: [ provider, token ]
-      }
-    }
-    const authProvider = new devshare.firebase.auth[`${capitalize(provider)}AuthProvider`]
-    authProvider.addScope('email')
-    if (type === 'popup') {
-      return {
-        method: 'signInWithPopup',
-        params: [ authProvider ]
-      }
-    }
-    return {
-      method: 'signInWithRedirect',
-      params: [ authProvider ]
-    }
-  }
-  if (token) {
-    return {
-      method: 'signInWithCustomToken',
-      params: [ token ]
-    }
-  }
-  return {
-    method: 'signInWithEmailAndPassword',
-    params: [ email, password ]
-  }
-}
-
-/**
  * @description Initialize authentication state change listener that
  * watches user profile and dispatches login action
  * @param {Function} dispatch - Action dispatch function
@@ -390,37 +346,6 @@ export const init = (dispatch, devshare) => {
   devshare.firebase.auth().currentUser
 }
 
-export const createUserProfile = (dispatch, devshare, userData, profile) => {
-  // Check for user's profile at userProfile path if provided
-  if (!devshare._.config.userProfile) {
-    return Promise.resolve(userData)
-  }
-  return devshare.firebase.database()
-    .ref()
-    .child(`${devshare._.config.userProfile}/${userData.uid}`)
-    .once('value')
-    .then(profileSnap => {
-      // Return Profile if it exists
-      if (profileSnap && profileSnap.val && profileSnap.val() !== null) {
-        return profileSnap.val()
-      }
-      // TODO: Update profile if different then existing
-      // Set profile if one does not already exist
-      return profileSnap.ref.set(profile)
-        .then(() => userData.uid)
-        .catch(err => {
-          // Error setting profile
-          dispatchUnauthorizedError(dispatch, err)
-          return Promise.reject(err)
-        })
-    })
-    .catch(err => {
-      // Error reading user profile
-      dispatchUnauthorizedError(dispatch, err)
-      return Promise.reject(err)
-    })
-}
-
 /**
  * @description Login with errors dispatched
  * @param {Function} dispatch - Action dispatch function
@@ -434,29 +359,7 @@ export const createUserProfile = (dispatch, devshare, userData, profile) => {
  */
 export const login = (dispatch, devshare, credentials) => {
   dispatchLoginError(dispatch, null)
-  const { method, params } = getLoginMethodAndParams(credentials, devshare)
-  if (method === 'signInWithEmailAndPassword' && !credentials.email) {
-    devshare.firebase.database().ref().child(devshare._.config.usernames)
-  }
-  return devshare.firebase.auth()[method](...params)
-    .then((userData) => {
-      // For email auth return uid (createUser is used for creating a profile)
-      if (userData.email) return userData.uid
-      // Create profile when logging in with external provider
-      const { user } = userData
-      return createUserProfile(
-        dispatch,
-        devshare,
-        user,
-        Object.assign(
-          {},
-          {
-            email: user.email,
-            providerData: user.providerData
-          }
-        )
-      )
-    })
+  return devshare.login(credentials)
     .catch(err => {
       dispatchLoginError(dispatch, err)
       return Promise.reject(err)
@@ -467,16 +370,15 @@ export const login = (dispatch, devshare, credentials) => {
  * @description Logout of firebase and dispatch logout event
  * @param {Function} dispatch - Action dispatch function
  * @param {Object} firebase - Internal firebase object
+ * @return {Promise}
  */
-export const logout = (dispatch, devshare) => {
-  return new Promise((resolve) => {
-    devshare.firebase.auth().signOut()
-    dispatch({ type: LOGOUT })
-    devshare._.authUid = null
-    unWatchUserProfile(devshare)
-    resolve()
-  })
-}
+export const logout = (dispatch, devshare) =>
+  devshare.logout()
+    .then(() => {
+      dispatch({ type: LOGOUT })
+      devshare._.authUid = null
+      unWatchUserProfile(devshare)
+    })
 
 /**
  * @description Create a new user in auth and add an account to userProfile root
@@ -485,35 +387,19 @@ export const logout = (dispatch, devshare) => {
  * @param {Object} credentials - Login credentials
  * @return {Promise}
  */
-export const createUser = (dispatch, devshare, { email, password }, profile) => {
+export const signup = (dispatch, devshare, credentials) => {
   dispatchLoginError(dispatch, null)
-
-  if (!email || !password) {
-    dispatchLoginError(dispatch, new Error('Email and Password are required to create user'))
-    return Promise.reject('Email and Password are Required')
-  }
-
-  return devshare.firebase.auth()
-    .createUserWithEmailAndPassword(email, password)
-    .then((userData) => {
-      // Login to newly created account
-      login(dispatch, devshare, { email, password })
-        .then(() => createUserProfile(dispatch, devshare, userData, profile))
-        .catch(err => {
-          if (err) {
-            switch (err.code) {
-              case 'auth/user-not-found':
-                dispatchLoginError(dispatch, new Error('The specified user account does not exist.'))
-                break
-              default:
-                dispatchLoginError(dispatch, err)
-            }
-          }
-          return Promise.reject(err)
-        })
-    })
-    .catch((err) => {
-      dispatchLoginError(dispatch, err)
+  return devshare.signup(credentials)
+    .catch(err => {
+      if (err) {
+        switch (err.code) {
+          case 'auth/user-not-found':
+            dispatchLoginError(dispatch, new Error('The specified user account does not exist.'))
+            break
+          default:
+            dispatchLoginError(dispatch, err)
+        }
+      }
       return Promise.reject(err)
     })
 }
@@ -543,4 +429,4 @@ export const resetPassword = (dispatch, devshare, email) => {
     })
 }
 
-export default { watchEvents, unWatchEvents, init, logout, createUser, resetPassword }
+export default { watchEvents, unWatchEvents, init, login, signup, logout, resetPassword }

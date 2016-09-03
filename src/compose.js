@@ -52,16 +52,16 @@ export default (config) => next => (reducer, initialState) => {
   const logout = () =>
     Actions.logout(dispatch, devshare)
 
-  const createUser = (credentials, profile) =>
-    Actions.createUser(dispatch, devshare, credentials, profile)
+  const signup = (credentials, profile) =>
+    Actions.signup(dispatch, devshare, credentials, profile)
 
   const resetPassword = (credentials) =>
     Actions.resetPassword(dispatch, devshare, credentials)
 
   devshare.helpers = {
     set, push, remove,
-    login, logout,
-    createUser, resetPassword,
+    login, logout, ref,
+    signup, resetPassword,
     watchEvent, unWatchEvent
   }
 
