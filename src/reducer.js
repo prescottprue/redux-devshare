@@ -34,14 +34,21 @@ export default (state = initialState, action = {}) => {
     case SET:
       const {data, snapshot} = action
       pathArr = pathToArr(path)
+      try {
+        retVal = (data !== undefined)
+          ? state.setIn(['data', ...pathArr], fromJS(data))
+          : state.deleteIn(['data', ...pathArr])
 
-      retVal = (data !== undefined)
-        ? state.setIn(['data', ...pathArr], fromJS(data))
-        : state.deleteIn(['data', ...pathArr])
-
-      retVal = (snapshot !== undefined)
-        ? retVal.setIn(['snapshot', ...pathArr], fromJS(snapshot))
-        : retVal.deleteIn(['snapshot', ...pathArr])
+      } catch(err) {
+        console.warn('first threw:', err)
+      }
+      try {
+        retVal = (snapshot !== undefined)
+          ? retVal.setIn(['snapshot', ...pathArr], fromJS(snapshot))
+          : retVal.deleteIn(['snapshot', ...pathArr])
+      } catch(err) {
+        console.warn('second threw:', {err, pathArr, snapshot, retVal})
+      }
 
       return retVal
 
