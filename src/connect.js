@@ -75,8 +75,8 @@ export default (dataOrFn = []) => WrappedComponent => {
       const linkFn = ensureCallable(dataOrFn)
       const data = linkFn(this.props, devshare)
 
-      const { helpers, firebase, ref } = devshare
-      this.devshare = { ref, firebase, ...helpers }
+      const { helpers, firebase, ref, projects, project, users, user } = devshare
+      this.devshare = { ref, firebase, projects, project, users, user, ...helpers }
 
       this._devshareEvents = getEventsFromDefinition(data)
       watchEvents(devshare, dispatch, this._devshareEvents)
