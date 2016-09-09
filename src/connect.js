@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { watchEvents, unWatchEvents } from './actions'
+import { watchEvents, unWatchEvents } from './actions/watch'
 
 const defaultEvent = {
   path: '',

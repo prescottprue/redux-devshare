@@ -32,20 +32,12 @@ export default (state = initialState, action = {}) => {
   switch (action.type) {
 
     case SET:
-      const {data, snapshot} = action
+      const { data } = action
       pathArr = pathToArr(path)
+
       retVal = (data !== undefined)
         ? state.setIn(['data', ...pathArr], fromJS(data))
         : state.deleteIn(['data', ...pathArr])
-
-      // Handle invalid keyPath error within immutable
-      try {
-        retVal = (snapshot !== undefined)
-          ? retVal.setIn(['snapshot', ...pathArr], fromJS(snapshot))
-          : retVal.deleteIn(['snapshot', ...pathArr])
-      } catch (err) {
-        // console.warn('Trouble updating path:', {err, pathArr, snapshot, retVal})
-      }
 
       return retVal
 

@@ -1,6 +1,6 @@
 // import Firebase from 'firebase'
 import Devshare, { init } from 'devshare'
-import * as Actions from './actions'
+import Actions from './actions'
 
 export default (config) => next => (reducer, initialState) => {
   const defaultConfig = {
@@ -36,6 +36,9 @@ export default (config) => next => (reducer, initialState) => {
   const push = (path, value, onComplete) =>
     ref.child(path).push(value, onComplete)
 
+  const update = (path, value, onComplete) =>
+    ref.child(path).update(value, onComplete)
+
   const remove = (path, onComplete) =>
     ref.child(path).remove(onComplete)
 
@@ -58,7 +61,7 @@ export default (config) => next => (reducer, initialState) => {
     Actions.resetPassword(dispatch, devshare, credentials)
 
   devshare.helpers = {
-    set, push, remove,
+    set, push, update, remove,
     login, logout, ref,
     signup, resetPassword,
     watchEvent, unWatchEvent
