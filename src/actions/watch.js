@@ -1,5 +1,5 @@
 import { SET, NO_VALUE } from '../constants'
-import { filter, map } from 'lodash'
+import { filter, map, isString } from 'lodash'
 
 const getWatchPath = (event, path) =>
   event + ':' + ((path.substring(0, 1) === '/') ? '' : '/') + path
@@ -227,7 +227,9 @@ export const watchEvent = (devshare, dispatch, event, path, dest, onlyLastEvent 
         const promises = map(listToPopulate, item =>
           Promise.all(
             map(item[paramToPopulate], (objId) =>
-              listRef.child(objId)
+            !isString(objId)
+              ? Promise.reject(`Population id is not a string.\n Type: ${typeof objId}\n Id: ${JSON.stringify(objId)}`)
+              : listRef.child(objId)
                 .once('value')
                 .then(snap => snap.val())
               )
