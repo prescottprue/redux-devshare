@@ -64,7 +64,8 @@ export default (config) => next => (reducer, initialState) => {
     set, push, update, remove,
     login, logout, ref,
     signup, resetPassword,
-    watchEvent, unWatchEvent
+    watchEvent, unWatchEvent,
+    storage: () => Devshare.firebase.storage()
   }
 
   Actions.init(dispatch, devshare)
