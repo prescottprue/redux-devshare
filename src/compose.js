@@ -61,10 +61,17 @@ export default (config) => next => (reducer, initialState) => {
     Actions.resetPassword(dispatch, devshare, credentials)
 
   devshare.helpers = {
-    set, push, update, remove,
-    login, logout, ref,
-    signup, resetPassword,
-    watchEvent, unWatchEvent,
+    set,
+    push,
+    update,
+    remove,
+    login,
+    logout,
+    ref,
+    signup,
+    resetPassword,
+    watchEvent,
+    unWatchEvent,
     storage: () => Devshare.firebase.storage()
   }
 
