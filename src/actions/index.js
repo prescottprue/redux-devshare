@@ -1,3 +1,4 @@
-export * as account from './account'
-export * as projects from './projects'
-export * as files from './files'
+import * as auth from './auth'
+import * as watch from './watch'
+export { auth, watch }
+export default Object.assign({}, watch, auth)

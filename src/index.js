@@ -1,4 +1,12 @@
-export * as Reducers from './reducers'
-export * as Actions from './actions'
+import devshare from './connect'
+import reduxDevshare from './compose'
+import reducer from './reducer'
+import * as helpers from './helpers'
 
-export Middleware from './middleware'
+export default {
+  devshare,
+  reducer,
+  reduxDevshare,
+  helpers
+}
+export { devshare, reducer, reduxDevshare, helpers }
