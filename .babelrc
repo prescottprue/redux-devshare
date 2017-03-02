@@ -1,6 +1,11 @@
 {
-  "presets": ["es2015", "stage-0", "react"],
+  "presets": ["es2015", "stage-1", "react"],
   "plugins": [
-    ["transform-decorators-legacy", "lodash"]
+    "es6-promise",
+    "add-module-exports",
+    "lodash",
+    "transform-object-rest-spread",
+    "transform-class-properties",
+    "transform-decorators-legacy"
   ]
 }
