@@ -1,7 +1,7 @@
 import React, { createClass, Children, PropTypes, Component } from 'react'
 import ReactDOM from 'react-dom'
 import connect from '../../src/connect'
-import reactReduxFirebase from '../../src/compose'
+import reduxDevshare from '../../src/compose'
 import TestUtils from 'react-addons-test-utils'
 import { createStore, compose, combineReducers } from 'redux'
 
@@ -33,9 +33,9 @@ describe('Connect', () => {
   }
 
 
-  it('should receive the store in the context', () => {
+  it.skip('should receive the store in the context', () => {
     const createStoreWithMiddleware = compose(
-      reactReduxFirebase(fbConfig, { userProfile: 'users' }),
+      reduxDevshare(fbConfig, { userProfile: 'users' }),
       typeof window === 'object' && typeof window.devToolsExtension !== 'undefined' ? window.devToolsExtension() : f => f
     )(createStore)
     const store = createStoreWithMiddleware(combineReducers({ test: (state = {}) => state }))

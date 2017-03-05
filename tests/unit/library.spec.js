@@ -3,21 +3,14 @@ import src from '../../src'
 
 describe('module', () => {
   describe('exports', () => {
-    it('firebase', () => {
-      expect(src).to.respondTo('firebase')
+    it('devshare', () => {
+      expect(src).to.respondTo('devshare')
     })
     it('firebaseStateReducer', () => {
-      expect(src).to.respondTo('firebaseStateReducer')
+      expect(src).to.respondTo('reducer')
     })
-    it('reduxReactFirebase', () => {
-      expect(src).to.respondTo('reduxReactFirebase')
-    })
-    it('reduxFirebase', () => {
-      expect(src).to.respondTo('reduxFirebase')
-    })
-    it('helpers', () => {
-      expect(src).to.have.property('helpers')
-      expect(src.helpers).to.be.an.object
+    it('reduxDevshare', () => {
+      expect(src).to.respondTo('reduxDevshare')
     })
   })
 })
