@@ -12,12 +12,10 @@
     "test": "mocha -R spec --compilers js:babel-core/register ./tests/setup.js ./tests/**/*.spec.js",
     "test:cov": "istanbul cover ./node_modules/mocha/bin/_mocha -- ./tests/** --recursive --report lcov --compilers js:babel-register --require babel-polyfill",
     "codecov": "cat coverage/*/lcov.info | codecov",
-    "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
-    "build:es": "cross-env BABEL_ENV=es babel src --out-dir es",
-    "build:umd": "cross-env BABEL_ENV=commonjs NODE_ENV=development webpack src/index.js dist/redux-devshare.js",
-    "build:umd:min": "cross-env BABEL_ENV=commonjs NODE_ENV=production webpack src/index.js dist/redux-devshare.min.js",
-    "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
-    "watch": "npm run build:commonjs -- --watch",
+    "build:lib": "babel src --out-dir lib",
+    "build": "npm run clean && npm run build:lib",
+    "watch:lib": "npm run build:lib -- --stats --progress --colors --watch",
+    "watch": "npm run watch:lib",
     "prepublish": "npm run clean && npm run build",
     "prepush": "npm run lint:fix",
     "docs:clean": "rimraf _book",
@@ -30,7 +28,7 @@
   "dependencies": {
     "devshare": "^0.2.1",
     "es6-promise": "^4.0.5",
-    "firebase": "3.6.5",
+    "firebase": "3.7.0",
     "immutable": "^3.8.1",
     "jwt-decode": "^2.1.0",
     "lodash": "^4.17.4"
@@ -75,11 +73,14 @@
     "jsdom": "^9.8.3",
     "mocha": "^3.1.2",
     "react-addons-test-utils": "^15.4.0",
+    "react": "^15.4.0",
     "react-dom": "^15.4.0",
+    "redux": "3.6.0",
+    "react-redux": "4.4.6",
     "rimraf": "^2.5.4",
     "sinon": "^1.17.6",
     "sinon-chai": "^2.8.0",
-    "webpack": "^1.13.2"
+    "webpack": "^1.14.0"
   },
   "repository": {
     "type": "git",

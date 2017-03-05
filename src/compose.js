@@ -1,5 +1,6 @@
 // import Firebase from 'firebase'
 import Devshare, { init } from 'devshare'
+import Firebase from 'firebase'
 import { authActions, queryActions } from './actions'
 
 let devshareInstance
@@ -69,12 +70,12 @@ export default (config) => next => (reducer, initialState) => {
   // Initialize devshare
   init(config)
 
-  const rootRef = Devshare.database().ref()
+  const rootRef = Firebase.database().ref()
 
   // Combine all configs
   const configs = Object.assign({}, defaultConfig, config)
 
-  const devshare = Object.defineProperty(Devshare, '_', {
+  const devshare = Object.defineProperty(Firebase, '_', {
     value: {
       watchers: {},
       config: configs,
@@ -145,8 +146,8 @@ export default (config) => next => (reducer, initialState) => {
 
   authActions.init(dispatch, devshare)
 
-  store.devshare = devshare
-  devshareInstance = Object.assign({}, devshare, devshare.helpers)
+  store.devshare = Devshare
+  devshareInstance = Devshare
 
   return store
 }
@@ -178,8 +179,7 @@ export default (config) => next => (reducer, initialState) => {
  * // then later
  * export const addTodo = (newTodo) =>
  *  (dispatch, getState, getDevshare) => {
- *    const firebase = getDevshare()
- *    firebase
+ *    getDevshare()
  *      .push('todos', newTodo)
  *      .then(() => {
  *        dispatch({ type: 'SOME_ACTION' })

@@ -50,8 +50,7 @@ export default (dataOrFn = []) => WrappedComponent => {
       const inputAsFunc = createCallable(dataOrFn)
       this.prevData = inputAsFunc(this.props, devshare)
 
-      const { ref, helpers, storage, database, auth } = devshare
-      this.devshare = { ref, storage, database, auth, ...helpers }
+      this.devshare = devshare
 
       this._devshareEvents = getEventsFromInput(this.prevData)
 
