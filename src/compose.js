@@ -1,7 +1,5 @@
 // import Firebase from 'firebase'
 import Devshare, { init } from 'devshare'
-import Firebase from 'firebase'
-import { authActions, queryActions } from './actions'
 
 let devshareInstance
 
@@ -21,23 +19,6 @@ let devshareInstance
  * @property {String} config.userProfile - Location on firebase to store user
  * profiles
  * @property {Boolean} config.enableLogging - Whether or not to enable Firebase
- * database logging
- * @property {Boolean} config.updateProfileOnLogin - Whether or not to update
- * profile when logging in. (default: `false`)
- * @property {Boolean} config.enableRedirectHandling - Whether or not to enable
- * auth redirect handling listener. (default: `true`)
- * @property {Function} config.profileFactory - Factory for modifying how user profile is saved.
- * @property {Function} config.uploadFileDataFactory - Factory for modifying how file meta data is written during file uploads
- * @property {Array|String} config.profileParamsToPopulate - Parameters within
- * profile object to populate
- * @property {Boolean} config.autoPopulateProfile - Whether or not to
- * automatically populate profile with data loaded through
- * profileParamsToPopulate config. (default: `true`)
- * @property {Boolean} config.setProfilePopulateResults - Whether or not to
- * call SET actions for data that results from populating profile to redux under
- * the data path. For example: role paramter on profile populated from 'roles'
- * root. True will call SET_PROFILE as well as a SET action with the role that
- * is loaded (places it in data/roles). (default: `false`)
  * @return {Function} That accepts a component a returns a wrapped version of component
  * @example <caption>Setup</caption>
  * import { createStore, compose } from 'redux'
@@ -59,92 +40,10 @@ let devshareInstance
  * const store = createStoreWithFirebase(rootReducer, initialState)
  */
 export default (config) => next => (reducer, initialState) => {
-  const defaultConfig = {
-    userProfile: '/users',
-    usernames: '/usernames'
-  }
-
   const store = next(reducer, initialState)
-  const { dispatch } = store
 
   // Initialize devshare
   init(config)
-
-  const rootRef = Firebase.database().ref()
-
-  // Combine all configs
-  const configs = Object.assign({}, defaultConfig, config)
-
-  const devshare = Object.defineProperty(Firebase, '_', {
-    value: {
-      watchers: {},
-      config: configs,
-      authUid: null
-    },
-    writable: true,
-    enumerable: true,
-    configurable: true
-  })
-
-  const set = (path, value, onComplete) =>
-    rootRef.child(path).set(value, onComplete)
-
-  const push = (path, value, onComplete) =>
-    rootRef.child(path).push(value, onComplete)
-
-  const update = (path, value, onComplete) =>
-    rootRef.child(path).update(value, onComplete)
-
-  const remove = (path, onComplete) =>
-    rootRef.child(path).remove(onComplete)
-
-  const uniqueSet = (path, value, onComplete) =>
-    rootRef.child(path)
-      .once('value')
-      .then(snap => {
-        if (snap.val && snap.val() !== null) {
-          const err = new Error('Path already exists.')
-          if (onComplete) onComplete(err)
-          return Promise.reject(err)
-        }
-        return rootRef.child(path).set(value, onComplete)
-      })
-
-  const watchEvent = (type, path, storeAs) =>
-      queryActions.watchEvent(devshare, dispatch, { type, path, storeAs })
-
-  const unWatchEvent = (eventName, eventPath, queryId = undefined) =>
-    queryActions.unWatchEvent(devshare, eventName, eventPath, queryId)
-
-  const login = credentials =>
-    authActions.login(dispatch, devshare, credentials)
-
-  const logout = () =>
-    authActions.logout(dispatch, devshare)
-
-  const createUser = (credentials, profile) =>
-    authActions.createUser(dispatch, devshare, credentials, profile)
-
-  const resetPassword = (credentials) =>
-    authActions.resetPassword(dispatch, devshare, credentials)
-
-  devshare.helpers = {
-    ref: path => devshare.database().ref(path),
-    set,
-    uniqueSet,
-    push,
-    remove,
-    update,
-    login,
-    logout,
-    createUser,
-    resetPassword,
-    watchEvent,
-    unWatchEvent,
-    storage: () => devshare.storage()
-  }
-
-  authActions.init(dispatch, devshare)
 
   store.devshare = Devshare
   devshareInstance = Devshare
