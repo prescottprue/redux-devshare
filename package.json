@@ -20,7 +20,7 @@
     "prepush": "npm run lint:fix"
   },
   "dependencies": {
-    "devshare": "^0.2.1",
+    "devshare": "0.3.0",
     "es6-promise": "^4.0.5",
     "firebase": "3.7.0",
     "immutable": "^3.8.1",
