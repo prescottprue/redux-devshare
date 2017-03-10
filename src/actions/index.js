@@ -1,4 +1,5 @@
-import * as auth from './auth'
-import * as watch from './watch'
-export { auth, watch }
-export default Object.assign({}, watch, auth)
+import * as authActions from './auth'
+import * as queryActions from './query'
+
+export { authActions, queryActions }
+export default { authActions, queryActions }

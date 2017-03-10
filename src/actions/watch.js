@@ -189,7 +189,8 @@ export const watchEvent = (devshare, dispatch, event, path, dest, onlyLastEvent 
           break
         default:
           break
-      } })
+      }
+    })
   }
 
   const runQuery = (q, e, p, params) => {

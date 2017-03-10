@@ -1,12 +1,18 @@
 import devshare from './connect'
-import reduxDevshare from './compose'
+import reduxDevshare, { getDevshare } from './compose'
 import reducer from './reducer'
+import constants, { actionTypes } from './constants'
 import * as helpers from './helpers'
+
+export { devshare, reducer, reduxDevshare, helpers }
 
 export default {
   devshare,
+  devshareConnect: devshare,
   reducer,
   reduxDevshare,
-  helpers
+  constants,
+  actionTypes,
+  getDevshare,
+  ...helpers
 }
-export { devshare, reducer, reduxDevshare, helpers }
